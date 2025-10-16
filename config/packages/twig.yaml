@@ -3,6 +3,7 @@ twig:
     globals:
         app_name: '%env(APP_NAME)%'
         app_title: '%env(APP_TITLE)%'
+    form_themes: ['bootstrap_5_horizontal_layout.html.twig']
 
 when@test:
     twig:

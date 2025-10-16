@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\AcademicYear;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -16,28 +17,9 @@ class AcademicYearRepository extends ServiceEntityRepository
         parent::__construct($registry, AcademicYear::class);
     }
 
-    //    /**
-    //     * @return AcademicYear[] Returns an array of AcademicYear objects
-    //     */
-    //    public function findByExampleField($value): array
-    //    {
-    //        return $this->createQueryBuilder('a')
-    //            ->andWhere('a.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->orderBy('a.id', 'ASC')
-    //            ->setMaxResults(10)
-    //            ->getQuery()
-    //            ->getResult()
-    //        ;
-    //    }
-
-    //    public function findOneBySomeField($value): ?AcademicYear
-    //    {
-    //        return $this->createQueryBuilder('a')
-    //            ->andWhere('a.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->getQuery()
-    //            ->getOneOrNullResult()
-    //        ;
-    //    }
+    public function findAllOrderedQueryBuilder(): QueryBuilder
+    {
+        return $this->createQueryBuilder('ay')
+            ->orderBy('ay.start', 'DESC');
+    }
 }
