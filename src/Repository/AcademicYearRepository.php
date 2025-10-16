@@ -22,4 +22,13 @@ class AcademicYearRepository extends ServiceEntityRepository
         return $this->createQueryBuilder('ay')
             ->orderBy('ay.start', 'DESC');
     }
+
+    public function findLatestOrNull(): ?AcademicYear
+    {
+        return $this->createQueryBuilder('ay')
+            ->orderBy('ay.start', 'DESC')
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
 }
