@@ -16,28 +16,15 @@ class EduNonWorkingDayRepository extends ServiceEntityRepository
         parent::__construct($registry, EduNonWorkingDay::class);
     }
 
-//    /**
-//     * @return EduNonWorkingDay[] Returns an array of EduNonWorkingDay objects
-//     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('e')
-//            ->andWhere('e.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('e.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
-
-//    public function findOneBySomeField($value): ?EduNonWorkingDay
-//    {
-//        return $this->createQueryBuilder('e')
-//            ->andWhere('e.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->getQuery()
-//            ->getOneOrNullResult()
-//        ;
-//    }
+    public function findBetweenDates(\DateTimeImmutable $start, \DateTimeImmutable $end): array
+    {
+        return $this->createQueryBuilder('nwd')
+            ->andWhere('nwd.date >= :start')
+            ->andWhere('nwd.date <= :end')
+            ->setParameter('start', $start)
+            ->setParameter('end', $end)
+            ->orderBy('nwd.date', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
 }

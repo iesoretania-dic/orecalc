@@ -1,0 +1,21 @@
+{% extends 'layout.html.twig' %}
+
+{% block content %}
+    <h1 class="display-1">{{ app_title }}</h1>
+
+    <h2>Jornadas y horas lectivas entre dos fechas</h2>
+
+    {{ form_start(form) }}
+    {{ form_widget(form) }}
+    <button type="submit" class="btn btn-primary">Calcular</button>
+    {{ form_end(form) }}
+
+    {% if stats %}
+    <div class="border border-tertiary rounded-3 mt-3 p-2">
+        <h3>Resultados</h3>
+        <p>Días totales: <strong>{{ stats.total_days }}</strong></p>
+        <p>Jornadas lectivas: <strong>{{ stats.working_days }}</strong></p>
+        <p>Horas lectivas: <strong>{{ stats.total_hours }}</strong></p>
+    </div>
+    {% endif %}
+{% endblock %}

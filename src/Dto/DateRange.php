@@ -3,7 +3,6 @@
 namespace App\Dto;
 
 use App\Entity\AcademicYear;
-use Symfony\Component\Validator\Constraints\GreaterThan;
 use Symfony\Component\Validator\Constraints\GreaterThanOrEqual;
 use Symfony\Component\Validator\Constraints\IsTrue;
 use Symfony\Component\Validator\Constraints\LessThanOrEqual;
@@ -18,7 +17,7 @@ class DateRange
     public ?\DateTimeImmutable $start;
 
     #[NotBlank]
-    #[GreaterThan(propertyPath: 'start', message: 'La fecha de fin debe ser posterior a la fecha de inicio')]
+    #[GreaterThanOrEqual(propertyPath: 'start', message: 'La fecha de fin debe ser posterior o igual a la fecha de inicio')]
     public ?\DateTimeImmutable $end;
 
     #[NotBlank]
