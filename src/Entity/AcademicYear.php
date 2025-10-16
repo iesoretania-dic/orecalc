@@ -17,11 +17,11 @@ class AcademicYear
     #[ORM\Column(length: 255)]
     private ?string $name = null;
 
-    #[ORM\Column(type: Types::DATE_MUTABLE)]
-    private ?\DateTime $start = null;
+    #[ORM\Column(type: Types::DATE_IMMUTABLE)]
+    private ?\DateTimeImmutable $start = null;
 
-    #[ORM\Column(type: Types::DATE_MUTABLE)]
-    private ?\DateTime $end = null;
+    #[ORM\Column(type: Types::DATE_IMMUTABLE)]
+    private ?\DateTimeImmutable $end = null;
 
     public function getId(): ?int
     {
@@ -40,24 +40,24 @@ class AcademicYear
         return $this;
     }
 
-    public function getStart(): ?\DateTime
+    public function getStart(): ?\DateTimeImmutable
     {
         return $this->start;
     }
 
-    public function setStart(\DateTime $start): static
+    public function setStart(\DateTimeImmutable $start): static
     {
         $this->start = $start;
 
         return $this;
     }
 
-    public function getEnd(): ?\DateTime
+    public function getEnd(): ?\DateTimeImmutable
     {
         return $this->end;
     }
 
-    public function setEnd(\DateTime $end): static
+    public function setEnd(\DateTimeImmutable $end): static
     {
         $this->end = $end;
 
