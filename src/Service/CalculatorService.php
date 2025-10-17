@@ -34,16 +34,33 @@ class CalculatorService
 
         $currentDate = $start;
 
+        $calendar = [];
+
         while ($currentDate <= $end) {
             $totalDays++;
             $currentHours = $weekHours[$currentDate->format('w')];
 
-            if ($currentHours > 0) {
-                if (!in_array($currentDate, $nonWorkingDates, true)) {
-                    $hours += $currentHours;
-                    $workingDays++;
+            if ($currentHours > 0 && in_array($currentDate, $nonWorkingDates, false) === false) {
+                $hours += $currentHours;
+                $workingDays++;
+            } else {
+                $currentHours = 0;
+            }
+
+            $weekNumber = (int) $currentDate->format('W');
+            $monthNumber = (int) $currentDate->format('n') - 1 +
+                (int) $currentDate->format('Y') * 12;
+            $dayNumber = (int) $currentDate->format('d');
+
+            if (!isset($calendar[$monthNumber][$weekNumber])) {
+                $weekDayNumber = (int) $currentDate->format('N') - 1;
+                for ($i = 0; $i < $weekDayNumber; $i++) {
+                    $calendar[$monthNumber][$weekNumber][] = null;
                 }
             }
+
+            $calendar[$monthNumber][$weekNumber][] = ['day' => $dayNumber, 'hours' => $currentHours];
+
             $currentDate = $currentDate->modify("+1 days");
         }
 
@@ -51,6 +68,7 @@ class CalculatorService
             'working_days' => $workingDays,
             'total_hours' => $hours,
             'total_days' => $totalDays,
+            'calendar' => $calendar
         ];
     }
 }

@@ -1,2 +1,6 @@
 body {
 }
+
+td.calendar-day {
+    height: 5em;
+}

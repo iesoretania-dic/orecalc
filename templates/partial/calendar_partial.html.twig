@@ -1,0 +1,35 @@
+{% set months = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'] %}
+{% for key, month in stats.calendar %}
+    <h3 class="mt-4">{{ months[key % 12] }} {{ key // 12 }}</h3>
+    <table class="table table-bordered table-striped">
+        <thead>
+            <tr>
+                <th>Lun</th>
+                <th>Mar</th>
+                <th>Mié</th>
+                <th>Jue</th>
+                <th>Vie</th>
+                <th>Sáb</th>
+                <th>Dom</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for week in month %}
+                <tr>
+                    {% for d in week %}
+                        {% if d %}
+                            <td class="calendar-day {% if d.hours > 0 %}table-success{% elseif loop.index > 5 %}table-secondary{% endif %}">
+                                {{ d.day }}
+                                {% if d.hours > 0 %}
+                                    <br><small>{{ d.hours }} hrs</small>
+                                {% endif %}
+                            </td>
+                        {% else %}
+                            <td class="calendar-day"></td>
+                        {% endif %}
+                    {% endfor %}
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endfor %}
