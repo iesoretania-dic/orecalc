@@ -1,5 +1,6 @@
 {% set months = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'] %}
 {% for key, month in stats.calendar %}
+    {% set month_total = 0 %}
     <h3 class="mt-4">{{ months[key % 12] }} {{ key // 12 }}</h3>
     <table class="table table-bordered table-striped">
         <thead>
@@ -11,25 +12,39 @@
                 <th>Vie</th>
                 <th>Sáb</th>
                 <th>Dom</th>
+                <th></th>
             </tr>
         </thead>
         <tbody>
             {% for week in month %}
+                {% set week_total = 0 %}
                 <tr>
                     {% for d in week %}
                         {% if d %}
                             <td class="calendar-day {% if d.hours > 0 %}table-success{% elseif loop.index > 5 %}table-secondary{% endif %}">
-                                {{ d.day }}
+                                <b>{{ d.day }}</b>
                                 {% if d.hours > 0 %}
-                                    <br><small>{{ d.hours }} hrs</small>
+                                    <br><small>{{ d.hours }} h.</small>
+                                    {% set week_total = week_total + d.hours %}
                                 {% endif %}
                             </td>
                         {% else %}
                             <td class="calendar-day"></td>
                         {% endif %}
                     {% endfor %}
+                    {% if week|length < 7 %}
+                        <td colspan="{{ 7 - week|length }}"></td>
+                    {% endif %}
+                    <td><small>{{ week_total }} h.</small></td>
                 </tr>
+                {% set month_total = month_total + week_total %}
             {% endfor %}
         </tbody>
+        <tfoot>
+            <tr>
+                <th colspan="7" class="text-end">Total horas lectivas:</th>
+                <th>{{ month_total }} h.</th>
+            </tr>
+        </tfoot>
     </table>
 {% endfor %}

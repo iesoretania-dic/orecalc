@@ -12,10 +12,12 @@
 
     {% if stats %}
         <div class="border border-tertiary rounded-3 mt-3 p-2">
-            <h3>Resultados</h3>
-            <p>Días totales: <strong>{{ stats.total_days }}</strong></p>
-            <p>Jornadas lectivas: <strong>{{ stats.working_days }}</strong></p>
-            <p>Horas lectivas: <strong>{{ stats.total_hours }}</strong></p>
+            <table class="table table-striped">
+            <tr><th colspan="2">Resultados</th></tr>
+                <tr><td class="col-2">Días totales del período:</td><td><strong>{{ stats.total_days }} días</strong></td>
+                <tr><td>Jornadas lectivas:</td><td><strong>{{ stats.working_days }} jornadas</strong></td>
+                <tr><td>Horas lectivas:</td><td><strong>{{ stats.total_hours }} horas</strong></td>
+            </table>
         </div>
         {% include 'partial/calendar_partial.html.twig' %}
     {% endif %}
