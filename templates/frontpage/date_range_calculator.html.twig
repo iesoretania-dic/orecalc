@@ -5,20 +5,27 @@
 
     <h2>Jornadas y horas lectivas entre dos fechas</h2>
 
-    {{ form_start(form) }}
-    {{ form_widget(form) }}
-    <button type="submit" class="btn btn-primary">Calcular</button>
-    {{ form_end(form) }}
-
-    {% if stats %}
-        <div class="border border-tertiary rounded-3 mt-3 p-2">
-            <table class="table table-striped">
-            <tr><th colspan="2">Resultados</th></tr>
-                <tr><td class="col-2">Días totales del período:</td><td><strong>{{ stats.total_days }} días</strong></td>
-                <tr><td>Jornadas lectivas:</td><td><strong>{{ stats.working_days }} jornadas</strong></td>
-                <tr><td>Horas lectivas:</td><td><strong>{{ stats.total_hours }} horas</strong></td>
-            </table>
+    <div class="row">
+        <div class="col-12 col-lg-8">
+            {{ form_start(form) }}
+            {{ form_widget(form) }}
+            <button type="submit" class="btn btn-primary">Calcular jornadas y horas</button>
+            {{ form_end(form) }}
         </div>
+        {% if stats %}
+            <div class="col-12 col-lg-4">
+                <div class="border border-tertiary rounded-3 mt-3 mt-lg-0 p-2">
+                    <table class="table table-striped">
+                        <tr><th colspan="2">Resultados</th></tr>
+                        <tr><td class="col-4 col-lg-6">Días totales del período:</td><td><strong>{{ stats.total_days }} días</strong></td>
+                        <tr><td>Jornadas lectivas:</td><td><strong>{{ stats.working_days }} jornadas</strong></td>
+                        <tr><td>Horas lectivas totales:</td><td><strong>{{ stats.total_hours }} horas</strong></td>
+                    </table>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+    {% if stats %}
         {% include 'partial/calendar_partial.html.twig' %}
     {% endif %}
 {% endblock %}

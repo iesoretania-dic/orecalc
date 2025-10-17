@@ -1,5 +1,7 @@
 {% set months = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'] %}
+<div class="row">
 {% for key, month in stats.calendar %}
+    <div class="col-12 col-lg-6">
     {% set month_total = 0 %}
     <h3 class="mt-4">{{ months[key % 12] }} {{ key // 12 }}</h3>
     <table class="table table-bordered table-striped">
@@ -47,4 +49,6 @@
             </tr>
         </tfoot>
     </table>
+    </div>
 {% endfor %}
+</div>
