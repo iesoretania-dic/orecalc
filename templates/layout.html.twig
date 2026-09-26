@@ -1,7 +1,17 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
+    <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom mb-3">
+        <div class="container">
+            <span class="navbar-brand">{{ app_name }}</span>
+            <div class="navbar-nav flex-row gap-3">
+                <a class="nav-link {% if app.request.attributes.get('_route') == 'frontpage' %}active fw-bold{% endif %}" href="{{ path('frontpage') }}">Jornadas y horas lectivas entre dos fechas</a>
+                <a class="nav-link {% if app.request.attributes.get('_route') == 'hours_from_start_date' %}active fw-bold{% endif %}" href="{{ path('hours_from_start_date') }}">Jornadas a partir de una fecha y horas lectivas</a>
+            </div>
+        </div>
+    </nav>
     <div class="container">
+        <h1 class="display-1">{{ app_title }}</h1>
     {% block content %}{% endblock %}
     </div>
 {% endblock %}
