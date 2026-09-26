@@ -28,8 +28,9 @@ class CalendarExportController extends AbstractController
 
         $extraColumns = max(0, min(self::MAX_EXTRA_COLUMNS, (int) $request->request->get('extra_columns', 0)));
         $showAllDates = (bool) $request->request->get('show_all_dates', false);
+        $separateByMonths = (bool) $request->request->get('separate_by_months', false);
 
-        $spreadsheet = $calendarExportService->export($calendar, $extraColumns, $showAllDates);
+        $spreadsheet = $calendarExportService->export($calendar, $extraColumns, $showAllDates, $separateByMonths);
 
         $response = new StreamedResponse(function () use ($spreadsheet) {
             $writer = new Xlsx($spreadsheet);

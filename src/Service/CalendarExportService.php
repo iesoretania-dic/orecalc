@@ -15,9 +15,13 @@ use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 class CalendarExportService
 {
     private const DATE_COLUMN = 1;
-    private const HOURS_COLUMN = 2;
-    private const NOTES_COLUMN = 3;
-    private const FIRST_EXTRA_COLUMN = 4;
+    private const WEEKDAY_LETTER_COLUMN = 2;
+    private const HOURS_COLUMN = 3;
+    private const NOTES_COLUMN = 4;
+    private const FIRST_EXTRA_COLUMN = 5;
+
+    /** Single-letter weekday abbreviations, indexed like DateTimeImmutable::format('N') - 1 (0 = Monday). */
+    private const WEEKDAY_LETTERS = ['L', 'M', 'X', 'J', 'V', 'S', 'D'];
 
     /** Columns in a month block's day grid: Lun..Dom. */
     private const WEEKDAY_COLUMNS = 7;
@@ -30,7 +34,7 @@ class CalendarExportService
 
     private const WEEKDAY_LABELS = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'];
 
-    public function export(array $calendar, int $extraColumns, bool $showAllDates): Spreadsheet
+    public function export(array $calendar, int $extraColumns, bool $showAllDates, bool $separateByMonths): Spreadsheet
     {
         $spreadsheet = new Spreadsheet();
         $sheet = $spreadsheet->getActiveSheet();
@@ -44,23 +48,19 @@ class CalendarExportService
         $row = 2;
         $extraColumnsFirstDataRow = null;
 
-        foreach ($this->sortedMonths($calendar) as $monthKey => $weeks) {
-            $monthRows = $this->collectMonthRows($monthKey, $weeks, $showAllDates);
-
-            if ($monthRows === []) {
-                continue;
+        foreach ($this->buildBlocks($calendar, $showAllDates, $separateByMonths) as $block) {
+            if ($block['title'] !== null) {
+                $titleRow = $row;
+                $sheet->setCellValue([self::DATE_COLUMN, $titleRow], $block['title']);
+                $sheet->mergeCells([self::DATE_COLUMN, $titleRow, $lastColumn, $titleRow]);
+                $sheet->getStyle([self::DATE_COLUMN, $titleRow, $lastColumn, $titleRow])->getFont()->setBold(true);
+                $row++;
             }
-
-            $titleRow = $row;
-            $sheet->setCellValue([self::DATE_COLUMN, $titleRow], $this->monthLabel($monthKey));
-            $sheet->mergeCells(Coordinate::stringFromColumnIndex(self::DATE_COLUMN) . $titleRow . ':' . Coordinate::stringFromColumnIndex($lastColumn) . $titleRow);
-            $sheet->getStyle([self::DATE_COLUMN, $titleRow, $lastColumn, $titleRow])->getFont()->setBold(true);
-            $row++;
 
             $firstDataRow = $row;
             $extraColumnsFirstDataRow ??= $firstDataRow;
 
-            foreach ($monthRows as [$date, $hours]) {
+            foreach ($block['rows'] as [$date, $hours]) {
                 $this->writeDayRow($sheet, $row, $date, $hours);
                 $row++;
             }
@@ -69,7 +69,7 @@ class CalendarExportService
             $this->writeSubtotalRow($sheet, $row, $firstDataRow, $lastDataRow);
             $row++;
 
-            $row++; // Blank spacer row before the next month.
+            $row++; // Blank spacer row before the next block.
         }
 
         $extraColumnsLastDataRow = $row - 2;
@@ -81,6 +81,36 @@ class CalendarExportService
         $sheet->freezePane('A2');
 
         return $spreadsheet;
+    }
+
+    /**
+     * @return list<array{title: ?string, rows: list<array{0: \DateTimeImmutable, 1: int}>}>
+     */
+    private function buildBlocks(array $calendar, bool $showAllDates, bool $separateByMonths): array
+    {
+        $months = $this->sortedMonths($calendar);
+
+        if ($separateByMonths) {
+            $blocks = [];
+
+            foreach ($months as $monthKey => $weeks) {
+                $rows = $this->collectMonthRows($monthKey, $weeks, $showAllDates);
+
+                if ($rows !== []) {
+                    $blocks[] = ['title' => $this->monthLabel($monthKey), 'rows' => $rows];
+                }
+            }
+
+            return $blocks;
+        }
+
+        $rows = [];
+
+        foreach ($months as $monthKey => $weeks) {
+            $rows = array_merge($rows, $this->collectMonthRows($monthKey, $weeks, $showAllDates));
+        }
+
+        return $rows !== [] ? [['title' => null, 'rows' => $rows]] : [];
     }
 
     public function exportGrid(
@@ -395,6 +425,7 @@ class CalendarExportService
     private function configureColumns(Worksheet $sheet, int $extraColumns, int $lastColumn): void
     {
         $sheet->getColumnDimension(Coordinate::stringFromColumnIndex(self::DATE_COLUMN))->setWidth(11);
+        $sheet->getColumnDimension(Coordinate::stringFromColumnIndex(self::WEEKDAY_LETTER_COLUMN))->setWidth(5);
         $sheet->getColumnDimension(Coordinate::stringFromColumnIndex(self::HOURS_COLUMN))->setWidth(6);
 
         $notesColumn = Coordinate::stringFromColumnIndex(self::NOTES_COLUMN);
@@ -409,6 +440,7 @@ class CalendarExportService
     private function writeHeaderRow(Worksheet $sheet, int $extraColumns, int $lastColumn): void
     {
         $sheet->setCellValue([self::DATE_COLUMN, 1], 'Fecha');
+        $sheet->setCellValue([self::WEEKDAY_LETTER_COLUMN, 1], 'Día');
         $sheet->setCellValue([self::HOURS_COLUMN, 1], 'Horas');
         $sheet->setCellValue([self::NOTES_COLUMN, 1], 'Previsto / realizado');
 
@@ -489,6 +521,9 @@ class CalendarExportService
         $dateCell = $sheet->getCell([self::DATE_COLUMN, $row]);
         $dateCell->setValue(ExcelDate::dateTimeToExcel($date));
         $dateCell->getStyle()->getNumberFormat()->setFormatCode('dd-mm-yy');
+
+        $sheet->setCellValue([self::WEEKDAY_LETTER_COLUMN, $row], self::WEEKDAY_LETTERS[$date->format('N') - 1]);
+        $sheet->getStyle([self::WEEKDAY_LETTER_COLUMN, $row])->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
 
         if ($hours > 0) {
             $sheet->setCellValue([self::HOURS_COLUMN, $row], $hours);
