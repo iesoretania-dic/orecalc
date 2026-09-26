@@ -54,7 +54,7 @@
 </div>
 
 <div class="border border-tertiary rounded-3 mt-4 p-3">
-    <h3>Exportar calendario</h3>
+    <h3>Exportar calendario (lista de jornadas)</h3>
     <form method="post" action="{{ path('export_calendar') }}">
         <input type="hidden" name="calendar" value="{{ stats.calendar|json_encode }}">
         <div class="row gy-2 align-items-end">
@@ -69,6 +69,36 @@
                 </div>
             </div>
             <div class="col-12 col-sm-3 col-md-3">
+                <button type="submit" class="btn btn-outline-primary w-100">Exportar a Excel</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<div class="border border-tertiary rounded-3 mt-4 p-3">
+    <h3>Exportar calendario (vista mensual)</h3>
+    <form method="post" action="{{ path('export_calendar_grid') }}">
+        <input type="hidden" name="calendar" value="{{ stats.calendar|json_encode }}">
+        <div class="row gy-2 align-items-end">
+            <div class="col-12 col-sm-4 col-md-2">
+                <label class="form-label" for="export_months_per_row">Meses por fila</label>
+                <input type="number" id="export_months_per_row" name="months_per_row" class="form-control" min="1" max="12" value="3">
+            </div>
+            <div class="col-12 col-sm-8 col-md-7">
+                <div class="form-check">
+                    <input type="checkbox" id="export_show_hours_in_cell" name="show_hours_in_cell" class="form-check-input" checked>
+                    <label class="form-check-label" for="export_show_hours_in_cell">Mostrar el número de horas dentro de cada casilla</label>
+                </div>
+                <div class="form-check">
+                    <input type="checkbox" id="export_show_weekly_total" name="show_weekly_total" class="form-check-input">
+                    <label class="form-check-label" for="export_show_weekly_total">Mostrar el total de horas semanales</label>
+                </div>
+                <div class="form-check">
+                    <input type="checkbox" id="export_show_month_working_days_total" name="show_month_working_days_total" class="form-check-input">
+                    <label class="form-check-label" for="export_show_month_working_days_total">Mostrar el total de jornadas de cada mes</label>
+                </div>
+            </div>
+            <div class="col-12 col-sm-12 col-md-3">
                 <button type="submit" class="btn btn-outline-primary w-100">Exportar a Excel</button>
             </div>
         </div>
