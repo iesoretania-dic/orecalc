@@ -34,8 +34,16 @@ class CalendarExportService
 
     private const WEEKDAY_LABELS = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'];
 
-    public function export(array $calendar, int $extraColumns, bool $showAllDates, bool $separateByMonths): Spreadsheet
-    {
+    /** Subtle alternate row background used to group the days of the same calendar week. */
+    private const WEEK_BAND_COLOR = 'FFE8EDF7';
+
+    public function export(
+        array $calendar,
+        int $extraColumns,
+        bool $showAllDates,
+        bool $separateByMonths,
+        bool $separateWeeksVisually
+    ): Spreadsheet {
         $spreadsheet = new Spreadsheet();
         $sheet = $spreadsheet->getActiveSheet();
         $sheet->setTitle('Calendario');
@@ -60,7 +68,23 @@ class CalendarExportService
             $firstDataRow = $row;
             $extraColumnsFirstDataRow ??= $firstDataRow;
 
+            $previousWeekKey = null;
+            $weekBand = false;
+
             foreach ($block['rows'] as [$date, $hours]) {
+                if ($separateWeeksVisually) {
+                    $weekKey = $date->format('o-W');
+
+                    if ($weekKey !== $previousWeekKey) {
+                        $weekBand = !$weekBand;
+                        $previousWeekKey = $weekKey;
+                    }
+
+                    if ($weekBand) {
+                        $this->fill($sheet, self::DATE_COLUMN, $row, $lastColumn, $row, self::WEEK_BAND_COLOR);
+                    }
+                }
+
                 $this->writeDayRow($sheet, $row, $date, $hours);
                 $row++;
             }
