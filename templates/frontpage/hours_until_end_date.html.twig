@@ -1,0 +1,35 @@
+{% extends 'layout.html.twig' %}
+
+{% block content %}
+    <h2>Jornadas hasta una fecha y horas lectivas</h2>
+
+    <div class="row">
+        <div class="col-12 col-lg-8">
+            {{ form_start(form) }}
+            {{ form_widget(form) }}
+            <button type="submit" class="btn btn-primary">Calcular fecha y jornadas</button>
+            {{ form_end(form) }}
+        </div>
+        {% if stats %}
+            <div class="col-12 col-lg-4">
+                <div class="border border-tertiary rounded-3 mt-3 mt-lg-0 p-2">
+                    {% if not stats.completed %}
+                        <div class="alert alert-warning">
+                            No se alcanzan las horas lectivas indicadas dentro del curso académico seleccionado. Se muestran los datos desde el inicio del curso.
+                        </div>
+                    {% endif %}
+                    <table class="table table-striped">
+                        <tr><th colspan="2">Resultados</th></tr>
+                        <tr><td class="col-4 col-lg-6">Fecha de inicio:</td><td><strong>{{ stats.start|date('d/m/Y') }}</strong></td>
+                        <tr><td>Días totales del período:</td><td><strong>{{ stats.total_days }} días</strong></td>
+                        <tr><td>Jornadas lectivas:</td><td><strong>{{ stats.working_days }} jornadas</strong></td>
+                        <tr><td>Horas lectivas totales:</td><td><strong>{{ stats.total_hours }} horas</strong></td>
+                    </table>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+    {% if stats %}
+        {% include 'partial/calendar_partial.html.twig' %}
+    {% endif %}
+{% endblock %}

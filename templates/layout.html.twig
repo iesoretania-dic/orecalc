@@ -4,9 +4,10 @@
     <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom mb-3">
         <div class="container">
             <span class="navbar-brand">{{ app_name }}</span>
-            <div class="navbar-nav flex-row gap-3">
+            <div class="navbar-nav flex-row flex-wrap gap-3">
                 <a class="nav-link {% if app.request.attributes.get('_route') == 'frontpage' %}active fw-bold{% endif %}" href="{{ path('frontpage') }}">Jornadas y horas lectivas entre dos fechas</a>
                 <a class="nav-link {% if app.request.attributes.get('_route') == 'hours_from_start_date' %}active fw-bold{% endif %}" href="{{ path('hours_from_start_date') }}">Jornadas a partir de una fecha y horas lectivas</a>
+                <a class="nav-link {% if app.request.attributes.get('_route') == 'hours_until_end_date' %}active fw-bold{% endif %}" href="{{ path('hours_until_end_date') }}">Jornadas hasta una fecha y horas lectivas</a>
             </div>
         </div>
     </nav>
